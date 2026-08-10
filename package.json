@@ -1,0 +1,17 @@
+{
+  "name": "ks-website",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "patch-export": "node scripts/patch-export.mjs",
+    "optimize": "node scripts/optimize-images.mjs",
+    "build": "npm run patch-export && npm run optimize && node scripts/build.mjs",
+    "dev": "npm run build && wrangler dev --ip 127.0.0.1 --port 8787"
+  },
+  "devDependencies": {
+    "wrangler": "4.120.0"
+  }
+}
