@@ -458,6 +458,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   HTMLMediaElement.prototype.play = function () {
+    if (this instanceof HTMLAudioElement) return originalPlay.apply(this, arguments);
     if (!isInView(this)) {
       this.dataset.wasPlaying = '1';
       return Promise.resolve();
@@ -519,7 +520,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   function scan() {
-    document.querySelectorAll('video, audio').forEach(watch);
+    document.querySelectorAll('video').forEach(watch);
   }
 
   var mo = new MutationObserver(scan);

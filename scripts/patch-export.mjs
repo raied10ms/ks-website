@@ -120,6 +120,18 @@ html = replaceAll(
   'src="assets/media/d7dRWNT02IpUqocuwdfGIjLj14.mp4" playsinline muted loop preload="none"',
   "reels video preload",
 )
+html = replaceAll(
+  html,
+  "HTMLMediaElement.prototype.play = function () {\n    if (!isInView(this)) {",
+  "HTMLMediaElement.prototype.play = function () {\n    if (this instanceof HTMLAudioElement) return originalPlay.apply(this, arguments);\n    if (!isInView(this)) {",
+  "audio viewport playback exclusion",
+)
+html = replaceAll(
+  html,
+  "document.querySelectorAll('video, audio').forEach(watch);",
+  "document.querySelectorAll('video').forEach(watch);",
+  "viewport-managed media selector",
+)
 
 html = html.replace(
   /<img(?![^>]*\bloading=)([^>]*\balt="Video thumbnail"[^>]*)>/g,
