@@ -9,6 +9,7 @@ const pageBundlePath = path.join(
   "assets/framer/sites/Vs51a7c_GeSFn8p9Z9-pBbS6oGRw8rWMknYFpdXFri8.tyHYJInR.mjs",
 )
 const routerBundlePath = path.join(root, "assets/framer/sites/script_main.DHqY5x5u.mjs")
+const videoBundlePath = path.join(root, "assets/framer/sites/Z1TG4zDAB.d3df3K0i.mjs")
 
 const tallyUrl = "https://tally.so/r/81Y9Jo"
 const internalFormLink = "{href:{webPageId:`cTKxDEEsL`},implicitPathVariables:void 0}"
@@ -19,6 +20,14 @@ function replaceAll(source, from, to, label) {
     throw new Error(`Could not find ${label}`)
   }
   return source.split(from).join(to)
+}
+
+function replaceFirstAvailable(source, alternatives, to, label) {
+  for (const from of alternatives) {
+    if (source.includes(from)) return source.split(from).join(to)
+  }
+  if (source.includes(to)) return source
+  throw new Error(`Could not find ${label}`)
 }
 
 function removePattern(source, pattern, label) {
@@ -55,6 +64,17 @@ function normalizeBundleHeadings(source) {
   }
 
   return source.replaceAll("d(b.h5,", "d(b.h3,")
+}
+
+function lazyLoadStaticImages(source) {
+  return source.replace(/<img\b[^>]*>/g, (tag) => {
+    if (/\bloading=/.test(tag) || /\bfetchpriority=["']high["']/.test(tag)) return tag
+
+    const attributes = /\bdecoding=/.test(tag)
+      ? ' loading="lazy"'
+      : ' loading="lazy" decoding="async"'
+    return tag.replace("<img", `<img${attributes}`)
+  })
 }
 
 let html = fs.readFileSync(htmlPath, "utf8")
@@ -134,19 +154,24 @@ html = replaceAll(
 )
 
 html = html.replace(
-  /<img(?![^>]*\bloading=)([^>]*\balt="Video thumbnail"[^>]*)>/g,
-  '<img loading="lazy" decoding="async"$1>',
-)
-html = html.replace(
   /<img(?![^>]*\bfetchpriority=)([^>]*images_5Z80avBUbdHDFL2jvdo93AsF9A\.webp[^>]*)>/g,
   '<img fetchpriority="high"$1>',
 )
+html = lazyLoadStaticImages(html)
 html = normalizeStaticHeadings(html)
 
 const headFixes = `
     <!-- KS site fixes: keep this block when refreshing the Framer export. -->
     <style id="ks-site-fixes">
       html { scroll-behavior: smooth; }
+
+      #hero [data-framer-appear-id="1l4qcyd"],
+      #hero [data-framer-appear-id="1nm0rp0"],
+      #hero [data-framer-appear-id="n88v33"],
+      #hero [data-framer-appear-id="1x95r0k"] {
+        opacity: 1 !important;
+        transform: none !important;
+      }
 
       @media (max-width: 359px) and (max-height: 600px) {
         .framer-13uq4m6-container {
@@ -166,7 +191,9 @@ const headFixes = `
     </style>
 `
 
-if (!html.includes('id="ks-site-fixes"')) {
+if (html.includes('id="ks-site-fixes"')) {
+  html = html.replace(/<!-- KS site fixes:[\s\S]*?<\/style>/, headFixes.trim())
+} else {
   html = html.replace("<!-- Start of headEnd -->", `${headFixes}<!-- Start of headEnd -->`)
 }
 
@@ -334,11 +361,14 @@ pageBundle = replaceAll(
   "c&&d(`img`,{src:a?.src,srcSet:a?.srcSet,alt:a?.alt||`Video thumbnail`,loading:`lazy`,decoding:`async`,draggable:!1",
   "carousel thumbnail loading",
 )
-pageBundle = replaceAll(
+pageBundle = replaceFirstAvailable(
   pageBundle,
-  "let n=new i.Image;n.src=t",
-  "let n=new i.Image;n.fetchPriority=`high`,n.src=t",
-  "slideshow image preload priority",
+  [
+    "let n=new i.Image;n.fetchPriority=`high`,n.src=t",
+    "let n=new i.Image;n.src=t",
+  ],
+  "let n=i.setTimeout(()=>{if(i.navigator?.connection?.saveData)return;let e=new i.Image;e.fetchPriority=`low`,e.src=t},2500);return()=>i.clearTimeout(n)",
+  "deferred slideshow image preload",
 )
 pageBundle = replaceAll(
   pageBundle,
@@ -348,6 +378,15 @@ pageBundle = replaceAll(
 )
 pageBundle = normalizeBundleHeadings(pageBundle)
 fs.writeFileSync(pageBundlePath, pageBundle)
+
+let videoBundle = fs.readFileSync(videoBundlePath, "utf8")
+videoBundle = replaceAll(
+  videoBundle,
+  "preload:G.current?`auto`:I&&!v?`metadata`:R!==`on-mount`&&!B?`none`:`metadata`",
+  "preload:G.current?`auto`:`none`",
+  "offscreen video preload",
+)
+fs.writeFileSync(videoBundlePath, videoBundle)
 
 let routerBundle = fs.readFileSync(routerBundlePath, "utf8")
 routerBundle = replaceAll(routerBundle, internalFormLink, `\`${tallyUrl}\``, "navigation CTA links")
