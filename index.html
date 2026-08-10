@@ -266,17 +266,36 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 	<script>
+	function scrollToActivitySection() {
+		var el = document.querySelector('.framer-kpea5s');
+		if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); return true; }
+		return false;
+	}
 	document.addEventListener('click', function(e) {
 		var a = e.target.closest('a[href]');
 		if (!a) return;
 		var u;
 		try { u = new URL(a.getAttribute('href'), location.href); } catch (err) { return; }
-		if (u.origin === location.origin && u.pathname === '/form') {
+		if (u.origin !== location.origin) return;
+		if (u.pathname === '/form') {
 			e.preventDefault();
 			e.stopImmediatePropagation();
 			window.open('https://tally.so/r/81Y9Jo', '_blank', 'noopener,noreferrer');
+			return;
+		}
+		if (u.hash === '#activity') {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			scrollToActivitySection();
 		}
 	}, true);
+	if (location.hash === '#activity') {
+		var tries = 0;
+		var timer = setInterval(function() {
+			tries++;
+			if (scrollToActivitySection() || tries > 30) clearInterval(timer);
+		}, 100);
+	}
 	</script>
 	<!-- Start of bodyStart -->
     
