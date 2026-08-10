@@ -1,0 +1,7 @@
+/assets/framer/og-image.jpg
+  Content-Type: image/jpeg
+  Cache-Control: public, max-age=86400
+  Access-Control-Allow-Origin: *
+
+/assets/framer/*
+  Cache-Control: public, max-age=31536000, immutable
