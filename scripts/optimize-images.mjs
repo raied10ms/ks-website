@@ -22,6 +22,9 @@ const heroImagesToOptimize = heroSlideshowImages.filter(
 
 function run(command, args) {
   const result = spawnSync(command, args, { encoding: "utf8" })
+  if (result.error) {
+    throw new Error(`${command} failed to start: ${result.error.message}`)
+  }
   if (result.status !== 0) {
     throw new Error(`${command} failed:\n${result.stderr || result.stdout}`)
   }
@@ -73,8 +76,7 @@ function optimizeHeroImages() {
   }
 }
 
-function generateResponsiveImages() {
-  fs.mkdirSync(responsiveDirectory, { recursive: true })
+function responsiveVariants() {
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8")
   const variants = new Map()
   const pattern = /assets\/framer\/([^?"'&]+)\?scale-down-to=(512|1024|2048)/g
@@ -92,13 +94,51 @@ function generateResponsiveImages() {
     variants.get(filename).add(1024)
   }
 
+  return variants
+}
+
+function responsiveDestination(filename, scale) {
+  const basename = path.basename(filename, path.extname(filename))
+  return path.join(responsiveDirectory, `${basename}-${scale}.webp`)
+}
+
+function validateResponsiveImages(variants) {
+  const missing = []
+  let validated = 0
+
+  for (const [filename, scales] of variants) {
+    const source = path.join(framerAssets, filename)
+    if (!fs.existsSync(source)) missing.push(path.relative(root, source))
+
+    for (const scale of scales) {
+      const destination = responsiveDestination(filename, scale)
+      if (!fs.existsSync(destination) || fs.statSync(destination).size === 0) {
+        missing.push(path.relative(root, destination))
+      } else {
+        validated += 1
+      }
+    }
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing prepared image assets:\n${missing.map(file => `- ${file}`).join("\n")}\n` +
+      "Run npm run optimize on a machine with FFmpeg, then commit the generated assets.",
+    )
+  }
+
+  console.log(`Validated ${validated} prepared responsive image variants.`)
+}
+
+function generateResponsiveImages(variants) {
+  fs.mkdirSync(responsiveDirectory, { recursive: true })
+
   for (const [filename, scales] of variants) {
     const source = path.join(framerAssets, filename)
     if (!fs.existsSync(source)) throw new Error(`Missing responsive image source: ${source}`)
-    const basename = path.basename(filename, path.extname(filename))
 
     for (const scale of scales) {
-      const destination = path.join(responsiveDirectory, `${basename}-${scale}.webp`)
+      const destination = responsiveDestination(filename, scale)
       const sourceModified = fs.statSync(source).mtimeMs
       if (fs.existsSync(destination) && fs.statSync(destination).mtimeMs >= sourceModified) continue
       encodeWebp(source, destination, scale)
@@ -107,5 +147,12 @@ function generateResponsiveImages() {
   }
 }
 
-optimizeHeroImages()
-generateResponsiveImages()
+const variants = responsiveVariants()
+
+if (process.argv.includes("--check")) {
+  validateResponsiveImages(variants)
+} else {
+  optimizeHeroImages()
+  generateResponsiveImages(variants)
+  validateResponsiveImages(variants)
+}
