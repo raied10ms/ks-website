@@ -74,14 +74,14 @@ html = replaceAll(
 
 html = replaceAll(
   html,
-  '<meta property="og:image" content="assets/framer/assets_FGocXRy6Tby4mYbgkOLvFbMa4HM.png">',
-  '<meta property="og:image" content="https://ks.10minuteschool.com/assets/framer/assets_FGocXRy6Tby4mYbgkOLvFbMa4HM.png">',
+  '<meta property="og:image" content="assets/framer/og-image.jpg">',
+  '<meta property="og:image" content="https://ks.10minuteschool.com/assets/framer/og-image.jpg">',
   "Open Graph image",
 )
 html = replaceAll(
   html,
-  '<meta name="twitter:image" content="assets/framer/assets_FGocXRy6Tby4mYbgkOLvFbMa4HM.png">',
-  '<meta name="twitter:image" content="https://ks.10minuteschool.com/assets/framer/assets_FGocXRy6Tby4mYbgkOLvFbMa4HM.png">',
+  '<meta name="twitter:image" content="assets/framer/og-image.jpg">',
+  '<meta name="twitter:image" content="https://ks.10minuteschool.com/assets/framer/og-image.jpg">',
   "X image",
 )
 
