@@ -56,10 +56,10 @@ const heroSubtitleCopyHtml =
 const heroSubtitleCopyBundle = `দেশজুড়ে ক্লাস ৫ ও ৮-এ বৃত্তিপ্রাপ্ত এবং SSC 26-এ A+ প্রাপ্ত কৃতী শিক্ষার্থীদের নিয়ে আবারও চলে আসলো টেন মিনিট স্কুলের বিশেষ সংবর্ধনা অনুষ্ঠান।
 
 ২০২৪ ও ২০২৫-এর ধারাবাহিকতায় এবার ২০২৬ সালে আবারও আমরা নিয়ে আসছি সারাজীবন মনে রাখার মতন মুহূর্তপূর্ণ অনুষ্ঠান নিয়ে। নিচের বাটনে ক্লিক করে রেজিস্ট্রেশন করে ফেলো! রেজিস্ট্রেশন এর পরে সিলেক্টেড হলে তোমাকে কল বা SMS এর মাধ্যমে জানানো হবে!`
-const registrationDeadlineCopyFrom = "২৫ আগস্ট"
-const registrationDeadlineCopyTo = "১০ই সেপ্টেম্বর"
-const countdownTargetFrom = "2026-08-25T17:59:00.000Z"
-const countdownTargetTo = "2026-09-10T17:59:00.000Z"
+const registrationDeadlineCopyFrom = "১০ই সেপ্টেম্বর"
+const registrationDeadlineCopyTo = "২৫শে সেপ্টেম্বর"
+const countdownTargetFrom = "2026-09-10T17:59:00.000Z"
+const countdownTargetTo = "2026-09-25T17:59:00.000Z"
 const whoForSectionOpen =
   '<section class="framer-1ssvkvo" data-framer-name="Who For - Section" id="who-for">'
 const activitySectionOpen =
