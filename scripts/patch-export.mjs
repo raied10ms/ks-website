@@ -818,6 +818,13 @@ const headFixes = `
         filter: brightness(1.08);
         box-shadow: 0 0 22px rgba(230, 53, 53, 0.55);
       }
+      a[data-ks-cta-closed="1"],
+      a[data-ks-cta-closed="1"]:hover {
+        pointer-events: none !important;
+        cursor: default !important;
+        transform: none !important;
+        filter: none !important;
+      }
       #event a.framer-eiX3Z[data-border="true"]::after {
         content: "";
         pointer-events: none;
@@ -1178,7 +1185,11 @@ const runtimeFixes = `
   var TALLY_URL = "${tallyUrl}";
   var TALLY_URL_VIP = "${tallyUrlVip}";
   var EVENT_HASH = "#event";
+  var COUNTDOWN_END = Date.parse("${countdownTargetTo}");
+  var CLOSED_CTA_COPY = "রেজিস্ট্রেশন শেষ";
+  var OPEN_CTA_COPIES = ["এখনই রেজিস্ট্রেশন করো", "এখনিই রেজিস্ট্রেশন করো", "রেজিস্ট্রেশন করো"];
   var isLocalDev = /^(localhost|127\\.0\\.0\\.1|\\[::1\\])$/.test(window.location.hostname);
+  var registrationCloseTimer = null;
 
   function setAttribute(element, name, value) {
     if (element.getAttribute(name) !== value) element.setAttribute(name, value);
@@ -1219,16 +1230,66 @@ const runtimeFixes = `
     });
   }
 
+  function isRegistrationClosed() {
+    if (!isNaN(COUNTDOWN_END) && Date.now() >= COUNTDOWN_END) return true;
+    var root = document.querySelector(".framer-6it4dl-container");
+    if (!root) return false;
+    var digits = [];
+    root.querySelectorAll("span").forEach(function (span) {
+      var text = (span.textContent || "").trim();
+      if (/^\\d+$/.test(text)) digits.push(Number(text));
+    });
+    return digits.length > 0 && digits.every(function (n) { return n === 0; });
+  }
+
+  function setCtaLabel(link, label) {
+    link.querySelectorAll(".framer-text").forEach(function (node) {
+      var text = (node.textContent || "").trim();
+      if (OPEN_CTA_COPIES.indexOf(text) !== -1 || text === CLOSED_CTA_COPY) {
+        if (node.textContent !== label) node.textContent = label;
+      }
+    });
+  }
+
+  function closeRegistrationCta(link) {
+    setAttribute(link, "data-ks-cta-closed", "1");
+    setAttribute(link, "aria-disabled", "true");
+    setAttribute(link, "tabindex", "-1");
+    if (link.hasAttribute("href")) link.removeAttribute("href");
+    if (link.hasAttribute("target")) link.removeAttribute("target");
+    if (link.hasAttribute("rel")) link.removeAttribute("rel");
+    setCtaLabel(link, CLOSED_CTA_COPY);
+  }
+
+  function hasClosedCtaCopy(link) {
+    var text = (link.textContent || "").replace(/\\s+/g, " ").trim();
+    if (text.indexOf(CLOSED_CTA_COPY) !== -1) return true;
+    for (var i = 0; i < OPEN_CTA_COPIES.length; i++) {
+      if (text.indexOf(OPEN_CTA_COPIES[i]) !== -1) return true;
+    }
+    return false;
+  }
+
   function rewriteRegistrationLinks() {
+    var closed = isRegistrationClosed();
     var selectors = [
       'a[href="' + TALLY_URL + '"]',
       'a[href="' + TALLY_URL_VIP + '"]',
       'a[href="./form"]',
       'a[href="/form"]',
+      'a[href="' + EVENT_HASH + '"]',
       'a[data-tally-cta]',
-      'a[data-ks-event-cta]'
+      'a[data-ks-event-cta]',
+      'a[data-ks-cta-closed]'
     ].join(", ");
     document.querySelectorAll(selectors).forEach(function (link) {
+      if (closed && (hasClosedCtaCopy(link) || link.closest("#event"))) {
+        closeRegistrationCta(link);
+        return;
+      }
+      if (link.hasAttribute("data-ks-cta-closed")) link.removeAttribute("data-ks-cta-closed");
+      if (link.getAttribute("aria-disabled") === "true") link.removeAttribute("aria-disabled");
+      if (link.getAttribute("tabindex") === "-1") link.removeAttribute("tabindex");
       if (link.closest("#event")) {
         if (link.getAttribute("href") === "./form" || link.getAttribute("href") === "/form") {
           setAttribute(link, "href", TALLY_URL);
@@ -1244,6 +1305,18 @@ const runtimeFixes = `
       if (link.hasAttribute("data-tally-cta")) link.removeAttribute("data-tally-cta");
       setAttribute(link, "data-ks-event-cta", "1");
     });
+  }
+
+  function scheduleRegistrationClose() {
+    if (registrationCloseTimer != null || isRegistrationClosed()) return;
+    var remaining = COUNTDOWN_END - Date.now() + 50;
+    if (remaining < 0) remaining = 0;
+    if (remaining > 2147483647) remaining = 2147483647;
+    registrationCloseTimer = window.setTimeout(function () {
+      registrationCloseTimer = null;
+      rewriteRegistrationLinks();
+      if (!isRegistrationClosed()) scheduleRegistrationClose();
+    }, remaining);
   }
 
 function paintOfficialCtaShaders(root) {
@@ -1686,6 +1759,13 @@ function paintOfficialCtaShaders(root) {
   }
 
   document.addEventListener("click", function (event) {
+    var closedLink = event.target.closest("a[data-ks-cta-closed]");
+    if (closedLink) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
+
     var clickedLink = event.target.closest("a[href]");
     if (clickedLink) {
       try {
@@ -1771,6 +1851,7 @@ function paintOfficialCtaShaders(root) {
   function start() {
     muteSiteMedia();
     enhance();
+    scheduleRegistrationClose();
     var root = document.getElementById("main");
     if (!root) return;
     new MutationObserver(function () {
@@ -1798,6 +1879,15 @@ function paintOfficialCtaShaders(root) {
     });
   }
 
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      rewriteRegistrationLinks();
+      scheduleRegistrationClose();
+    }, { once: true });
+  } else {
+    rewriteRegistrationLinks();
+    scheduleRegistrationClose();
+  }
   if (document.readyState === "complete") start();
   else window.addEventListener("load", start, { once: true });
   document.addEventListener("framer:pageview", enhance);
