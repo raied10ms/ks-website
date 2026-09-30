@@ -52,14 +52,24 @@ const faqRegistrationCopyTo = `SSC 26 Batch-এর ক্ষেত্রে:
 const heroSubtitleCopyFrom =
   "দেশজুড়ে ক্লাস ৫, ক্লাস ৮-এ বৃত্তিপ্রাপ্ত এবং SSC 26-এ A+ প্রাপ্ত কৃতিদের নিয়ে বিশেষ সংবর্ধনা। ২০২৪ ও ২০২৫-এর ধারাবাহিকতায় এবার ২০২৬ সালে আবারও আসছি সারাজীবন মনে রাখার মতন কিছু মুহূর্ত নিয়ে।"
 const heroSubtitleCopyHtml =
-  'দেশজুড়ে ক্লাস ৫ ও ৮-এ বৃত্তিপ্রাপ্ত এবং SSC 26-এ A+ প্রাপ্ত কৃতী শিক্ষার্থীদের নিয়ে আবারও চলে আসলো টেন মিনিট স্কুলের বিশেষ সংবর্ধনা অনুষ্ঠান।<br class="framer-text"><br class="framer-text">২০২৪ ও ২০২৫-এর ধারাবাহিকতায় এবার ২০২৬ সালে আবারও আমরা নিয়ে আসছি সারাজীবন মনে রাখার মতন মুহূর্তপূর্ণ অনুষ্ঠান নিয়ে। নিচের বাটনে ক্লিক করে রেজিস্ট্রেশন করে ফেলো! রেজিস্ট্রেশন এর পরে সিলেক্টেড হলে তোমাকে কল বা SMS এর মাধ্যমে জানানো হবে!'
+  'দেশজুড়ে ক্লাস ৫ ও ৮-এ বৃত্তিপ্রাপ্ত এবং SSC 26-এ A+ প্রাপ্ত কৃতী শিক্ষার্থীদের নিয়ে আবারও চলে আসলো টেন মিনিট স্কুলের বিশেষ সংবর্ধনা অনুষ্ঠান।<br class="framer-text"><br class="framer-text">২০২৪ ও ২০২৫-এর ধারাবাহিকতায় এবার ২০২৬ সালে আবারও আমরা নিয়ে আসছি সারাজীবন মনে রাখার মতন মুহূর্তপূর্ণ অনুষ্ঠান নিয়ে। রেজিস্ট্রেশন এর পরে সিলেক্টেড হলে তোমাকে কল বা SMS এর মাধ্যমে জানানো হবে!'
 const heroSubtitleCopyBundle = `দেশজুড়ে ক্লাস ৫ ও ৮-এ বৃত্তিপ্রাপ্ত এবং SSC 26-এ A+ প্রাপ্ত কৃতী শিক্ষার্থীদের নিয়ে আবারও চলে আসলো টেন মিনিট স্কুলের বিশেষ সংবর্ধনা অনুষ্ঠান।
 
-২০২৪ ও ২০২৫-এর ধারাবাহিকতায় এবার ২০২৬ সালে আবারও আমরা নিয়ে আসছি সারাজীবন মনে রাখার মতন মুহূর্তপূর্ণ অনুষ্ঠান নিয়ে। নিচের বাটনে ক্লিক করে রেজিস্ট্রেশন করে ফেলো! রেজিস্ট্রেশন এর পরে সিলেক্টেড হলে তোমাকে কল বা SMS এর মাধ্যমে জানানো হবে!`
+২০২৪ ও ২০২৫-এর ধারাবাহিকতায় এবার ২০২৬ সালে আবারও আমরা নিয়ে আসছি সারাজীবন মনে রাখার মতন মুহূর্তপূর্ণ অনুষ্ঠান নিয়ে। রেজিস্ট্রেশন এর পরে সিলেক্টেড হলে তোমাকে কল বা SMS এর মাধ্যমে জানানো হবে!`
 const registrationDeadlineCopyFrom = "১০ই সেপ্টেম্বর"
 const registrationDeadlineCopyTo = "২৫শে সেপ্টেম্বর"
 const countdownTargetFrom = "2026-09-10T17:59:00.000Z"
 const countdownTargetTo = "2026-09-25T17:59:00.000Z"
+const heroDateCopyFrom = "তারিখঃ শীঘ্রই জানানো হবে"
+const heroDateCopyTo = "তারিখঃ ৯ অক্টোবর, ২০২৬"
+const heroDateShortFrom = "শীঘ্রই জানানো হবে"
+const heroDateShortTo = "৯ অক্টোবর, ২০২৬"
+const heroVenueCopyFrom = "ভেন্যু: নির্বাচিতদের জানানো হবে"
+const heroVenueShortFrom = "নির্বাচিতদের জানানো হবে"
+const heroVenueHtml =
+  '<strong class="framer-text">শহীদ সোহরাওয়ার্দী ইনডোর স্টেডিয়াম</strong><br class="framer-text">ঢাকা ১২১৬, বাংলাদেশ।'
+const heroVenueBundle =
+  "[d(`strong`,{children:`শহীদ সোহরাওয়ার্দী ইনডোর স্টেডিয়াম`}),d(`br`,{}),`ঢাকা ১২১৬, বাংলাদেশ।`]"
 const whoForSectionOpen =
   '<section class="framer-1ssvkvo" data-framer-name="Who For - Section" id="who-for">'
 const activitySectionOpen =
@@ -464,6 +474,10 @@ html = replaceAll(
   registrationDeadlineCopyTo,
   "registration deadline copy",
 )
+html = replaceAll(html, heroDateCopyFrom, heroDateCopyTo, "hero date copy")
+html = replaceAll(html, heroDateShortFrom, heroDateShortTo, "hero date copy mobile")
+html = replaceAll(html, heroVenueCopyFrom, heroVenueHtml, "hero venue copy")
+html = replaceAll(html, heroVenueShortFrom, heroVenueHtml, "hero venue copy mobile")
 if (/<section[^>]*id="event"/.test(html)) {
   html = html.replace(/<section[^>]*id="event"[^>]*>[\s\S]*?<\/section>/, upcomingEventHtml)
 } else {
@@ -506,6 +520,63 @@ const headFixes = `
         opacity: 1 !important;
         transform: none !important;
         visibility: visible !important;
+      }
+      .framer-2iAM9 .framer-13uq4m6-container {
+        display: none !important;
+      }
+      .framer-2iAM9 .framer-12nsrkr,
+      .framer-2iAM9 .framer-12nsrkr .framer-text {
+        white-space: normal;
+        text-align: right;
+      }
+      @media (max-width: 1199.98px) {
+        .framer-2iAM9 .framer-1raer9f {
+          flex-wrap: wrap !important;
+          align-items: flex-start !important;
+          row-gap: 8px !important;
+        }
+        .framer-2iAM9 .framer-wwut7a,
+        .framer-2iAM9 .framer-1hu0nud {
+          width: 100% !important;
+          max-width: 100% !important;
+          flex: 1 1 100% !important;
+        }
+        .framer-2iAM9 .framer-12nsrkr {
+          width: auto !important;
+          max-width: calc(100% - 40px) !important;
+          flex: 1 1 auto !important;
+          overflow: visible !important;
+        }
+        .framer-2iAM9 .framer-12nsrkr .framer-text {
+          white-space: normal !important;
+        }
+      }
+      @media (min-width: 680px) and (max-width: 1199.98px) {
+        .framer-2iAM9 .framer-12nsrkr .framer-text {
+          text-align: left !important;
+        }
+      }
+      @media (max-width: 679.98px) {
+        .framer-2iAM9 .framer-1raer9f {
+          align-items: center !important;
+          justify-content: center !important;
+        }
+        .framer-2iAM9 .framer-wwut7a,
+        .framer-2iAM9 .framer-1hu0nud {
+          justify-content: center !important;
+          align-items: center !important;
+        }
+        .framer-2iAM9 .framer-13ji57v,
+        .framer-2iAM9 .framer-12nsrkr {
+          flex: 0 1 auto !important;
+          width: auto !important;
+          max-width: calc(100% - 40px) !important;
+        }
+        .framer-2iAM9 .framer-13ji57v .framer-text,
+        .framer-2iAM9 .framer-12nsrkr .framer-text {
+          text-align: center !important;
+          --framer-text-alignment: center !important;
+        }
       }
 
       @media (max-width: 359px) and (max-height: 600px) {
@@ -1964,6 +2035,20 @@ pageBundle = replaceAll(
   countdownTargetFrom,
   countdownTargetTo,
   "registration countdown target date",
+)
+pageBundle = replaceAll(pageBundle, heroDateCopyFrom, heroDateCopyTo, "hero date copy")
+pageBundle = replaceAll(pageBundle, heroDateShortFrom, heroDateShortTo, "hero date copy mobile")
+pageBundle = replaceAll(
+  pageBundle,
+  `children:\`${heroVenueCopyFrom}\``,
+  `children:${heroVenueBundle}`,
+  "hero venue copy",
+)
+pageBundle = replaceAll(
+  pageBundle,
+  `children:\`${heroVenueShortFrom}\``,
+  `children:${heroVenueBundle}`,
+  "hero venue copy mobile",
 )
 pageBundle = replaceAll(pageBundle, faqDateCopyFrom, faqDateCopyTo, "FAQ date answer copy")
 pageBundle = replaceAll(
